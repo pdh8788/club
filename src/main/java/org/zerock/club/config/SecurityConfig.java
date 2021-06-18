@@ -106,13 +106,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 인가/인증 절차에서 문제가 발생했을 때 로그인 페이지를 보여주도록 지정할 수 있고,
         // 화면으로 로그인 방식을 지원한다는 의미로 사용됩니다.
+        // formLogin()을 이용하는 경우 별도의 디자인을 적용하기 위해서는 추가적인 설정이 필요합니다.
+        // loginPage()나 loginProcessUrl(), defaultSuccessUrl(), faillureUrl() 등을 이용해서 필요한 설정을 지정할 수 있습니다.
+        // 대부분의 애플리케이션은 고유한 디자인을 적용하기 때문에 loginPage()를 사용해서 별도의 로그인 페이지를 이용하는 경우가 많습니다.
         http.formLogin();
 
         // csrf토큰 비활성화
         http.csrf().disable();
 
         // logout 설정
+        // formLogin()과 마찬가지로 logout() 메서드를 이용하면 로그아웃 처리가 가능합니다.
+        // formLogout() 역시 로그인과 마찬가지로 별도의 설정이 없는 경우에는 스프링 시큐리티가 제공하는 웹 페이지를 보게 됩니다.
+        // logOut에서 주의해야 할점은 CSRF토큰을 사용할 때는 반드시 POST 방식으로만 로그아웃을 처리해야만 합니다.
+        // 반면에 CSRF토큰을 비활성화 시키면 GET(/logout)으로도 로그아웃이 처리 됩니다.
+        // 로그아웃도 formLogin()과 마찬가지로 사용자가 별도의 로그아웃 관련 설정을 추가할 수 있습니다.
         http.logout();
+
+
         http.oauth2Login().successHandler(successHandler());
         http.rememberMe().tokenValiditySeconds(60*60*7).userDetailsService(userDetailService); //7days
 
