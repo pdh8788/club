@@ -123,6 +123,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.oauth2Login().successHandler(successHandler());
         http.rememberMe().tokenValiditySeconds(60*60*7).userDetailsService(userDetailService); //7days
 
+
+        /**
+         * ** 필터의 위치 조절과 AntPathMatcher
+         */
         //필터의 위치 조절
         http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(apiLoginFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -169,6 +173,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private ClubUserDetailService userDetailService ; // 주입
 
+    /**
+     * ApiChekcFilter, 스프링의 빈으로 설정
+     */
+    @Bean
+    public ApiCheckFilter apiCheckFilter(){
+
+        // ApiCheckerFilter는 오직 '/notes/..'로 시작하는 경우에만 동작하는게 바람직할 것입니다.
+        // 이를 처리하는 방법으로는 AntPathMatcher라는 것을 사용합니다. AntPathMatcher는 앤트 패턴에 맞는지를 검사하는 유틸리티 입니다.
+        return new ApiCheckFilter("/notes/**/*", jwtUtil());
+    }
+
     @Bean
     public ApiLoginFilter apiLoginFilter() throws Exception {
         ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login", jwtUtil());
@@ -178,14 +193,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
 
         return apiLoginFilter;
-    }
-
-    /**
-     * ApiChekcFilter, 스프링의 빈으로 설정
-     */
-    @Bean
-    public ApiCheckFilter apiCheckFilter(){
-        return new ApiCheckFilter("/notes/**/*", jwtUtil());
     }
 
     @Bean

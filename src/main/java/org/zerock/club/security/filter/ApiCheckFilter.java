@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * OncePerRequestFilter는 추상 클래스로 제공되는 필터로 가장 일반적이며, 매번 동작하는 기본적인 필터입니다.
+ * OncePerRequestFilter는 추상 클래스이므로 이를 사용하기 위해서는 상속으로 구현해야 합니다.
+ */
+
 @Log4j2
 public class  ApiCheckFilter extends OncePerRequestFilter {
 
@@ -84,6 +89,16 @@ public class  ApiCheckFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     *
+     * Authorization 헤더 처리
+     * 특정한 API를 호출하는 클라이언트에서는 다른 서버나 Application으로 실행되기 때문에 쿠키나 세션을 활용할 수 없습니다.
+     * 이러한 제약 때문에 api를 호출하는 경우에는 Request를 전송할 때 Http 헤더 메시지에 특별한 값을 지정해서 전송합니다.
+     *
+     * Authrization헤더는 이러한 용도로 사용합니다. 클라이언트에서 전송한 Request에 포함된 Authorization 헤더의 값을 파악해서
+     * 사용자가 정상적인 요청인지를 알아내는 것입니다.
+     *
+     */
     private boolean checkAuthHeader(HttpServletRequest request){
 
         boolean checkResult = false;

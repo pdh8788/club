@@ -30,6 +30,9 @@ public class NoteController {
         return new ResponseEntity<>(num, HttpStatus.OK);
     }
 
+    // produces: 응답 헤더로 "Content-Type: application/json;charset=UTF-8
+    // consumes: HTTP 요청 헤더가 "Conent-Type: application/json;charset=UTF-8"인 것만 처리한다.
+    //           다른 값이 들어올 경우 HttpMediaTypeNotSupportedException을 발생시킨다.
     @GetMapping(value = "/{num}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NoteDTO> read(@PathVariable("num") Long num){
 
