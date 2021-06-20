@@ -33,9 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * -> 접근 제한 어노테이션
      */
 
-    @Autowired
-    private ClubUserDetailService userDetailService ; // 주입
-
     /**
      * 스프링 시큐리티 내부에는 여러 개의 필터가 Filter Chaine이라는 구조로 Request를 처리하게 됩니다.
      * 개발 시에 필터를 확장하고 설정하면 스프링 시큐리티를 이용해서 다양한 형태의 로그인 처리가 가능하게 됩니다.
@@ -149,24 +146,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
 
     /**
-     * 스프링 시큐리티에서는 회원이나 계정에 대해서 User라는 용어를 사용합니다. User라는 단어를 사용할 때는 상당히 주의해야 합니다.
-     * 이러한 이유 때문에 앞의 예제에서도 ClubMember와 같이 다른 이름을 사용하고 있습니다.
+     * ** 시큐리티를 위한 UserDetailService
      *
-     * 회원 아이디라는 용어 대신에 username이라는 단어를 사용합니다. 스프링 시큐리티에서는 username이라는 단어 자체가 회원을 구별할 수 있는
-     * 식별 데이터를 의미합니다. 문자열로 처리하지 않는 점은 같지만 일반적으로 사용하는 회원의 이름이 아니라 오히려 id에 해당합니다.
+     * 기존의 로그인 처리방식은 회원 아이디와 패스워드로 DB를 조회하고 올바른 데이터가 있다면 세션과 쿠키로 처리하는 형태의 제작을
+     * 하게 됩니다. 반면에 스프링 시큐리티는 기존과는 좀 다른 방식으로 동작합니다. 차이점은 다음과 같습니다.
      *
-     * username과 password를 동시에 사용하지 않습니다. 스프링 시큐리티는 UserDetailService를 이용해서 회원의 존재만을 우선적으로 가져오고,
-     * 이후에 password가 틀리면 'Bad Cridential(잘못된 자격증명)'이라는 결과를 만들어 냅니다.(인증)
+     * 1. 스프링 시큐리티에서는 회원이나 계정에 대해서 User라는 용어를 사용합니다. User라는 단어를 사용할 때는 상당히 주의해야 합니다.
+     *    이러한 이유 때문에 앞의 예제에서도 ClubMember와 같이 다른 이름을 사용하고 있습니다.
      *
-     * 사용자의 username과 password로 인증 과정이 긑나면 원하는 자원에(URL)에 접근할 수 있는 적절한 권한이 있는지를 확인하고
-     * 인가 과정을 실행합니다. 이 과정에서는 'Access Denied'와 같은 결과가 만들어 집니다.
+     * 2. 회원 아이디라는 용어 대신에 username이라는 단어를 사용합니다. 스프링 시큐리티에서는 username이라는 단어 자체가 회원을 구별할 수 있는
+     *    식별 데이터를 의미합니다. 문자열로 처리하지 않는 점은 같지만 일반적으로 사용하는 회원의 이름이 아니라 오히려 id에 해당합니다.
+     *
+     * 3. username과 password를 동시에 사용하지 않습니다. 스프링 시큐리티는 UserDetailService를 이용해서 회원의 존재만을 우선적으로 가져오고,
+     *    이후에 password가 틀리면 'Bad Cridential(잘못된 자격증명)'이라는 결과를 만들어 냅니다.(인증)
+     *
+     * 4. 사용자의 username과 password로 인증 과정이 끝나면 원하는 자원에(URL)에 접근할 수 있는 적절한 권한이 있는지를 확인하고
+     *    인가 과정을 실행합니다. 이 과정에서는 'Access Denied'와 같은 결과가 만들어 집니다.
      *
      * 위와 같은 차이점을 처리하는 가장 핵심적인 부품은 UserDetailService입니다. UserDetailService는 아래와 같이 loadUserByUsername()이라는 단 하나의 메서드를 가지고 있습니다.
-     * ---- UserDetails 인터페이스
-     * loadUserByUsername() 말 그대로 username이라는 회원 아이디와 같은 식별 값으로 회원 정보를 가져옵니다. 메서드의 리턴 타입은 UserDetails라는 타입,
-     *
-     *
      */
+
+    @Autowired
+    private ClubUserDetailService userDetailService ; // 주입
 
     @Bean
     public ApiLoginFilter apiLoginFilter() throws Exception {
